@@ -1,39 +1,48 @@
-# Welcome to ASP.NET Core
+# Authorization
 
-We've made some big updates in this release, so it’s **important** that you spend a few minutes to learn what’s new.
+This example shows how to authorize only users in certain roles to access an API endpoint.
 
-You've created a new ASP.NET Core project. [Learn what's new](https://go.microsoft.com/fwlink/?LinkId=518016)
+You can read a quickstart for this sample [here](https://auth0.com/docs/quickstart/backend/aspnet-core-webapi/03-authorization). 
 
-## This application consists of:
+## Getting Started
 
-*   Sample pages using ASP.NET Core MVC
-*   [Bower](https://go.microsoft.com/fwlink/?LinkId=518004) for managing client-side libraries
-*   Theming using [Bootstrap](https://go.microsoft.com/fwlink/?LinkID=398939)
+To run this quickstart you can fork and clone this repo.
 
-## How to
+Ensure that you have configured your application in Auth0 to use RS256 for signing JSON Web Tokens, and that you have created the Rule described in the quickstart.
 
-*   [Add a Controller and View](https://go.microsoft.com/fwlink/?LinkID=398600)
-*   [Add an appsetting in config and access it in app.](https://go.microsoft.com/fwlink/?LinkID=699562)
-*   [Manage User Secrets using Secret Manager.](https://go.microsoft.com/fwlink/?LinkId=699315)
-*   [Use logging to log a message.](https://go.microsoft.com/fwlink/?LinkId=699316)
-*   [Add packages using NuGet.](https://go.microsoft.com/fwlink/?LinkId=699317)
-*   [Add client packages using Bower.](https://go.microsoft.com/fwlink/?LinkId=699318)
-*   [Target development, staging or production environment.](https://go.microsoft.com/fwlink/?LinkId=699319)
+Next, update the `appsettings.json` with your Auth0 settings:
 
-## Overview
+```json
+{
+  "Auth0": {
+    "Domain": "Your Auth0 domain",
+    "ClientId": "Your Auth0 Client Id"
+  } 
+}
+```
 
-*   [Conceptual overview of what is ASP.NET Core](https://go.microsoft.com/fwlink/?LinkId=518008)
-*   [Fundamentals of ASP.NET Core such as Startup and middleware.](https://go.microsoft.com/fwlink/?LinkId=699320)
-*   [Working with Data](https://go.microsoft.com/fwlink/?LinkId=398602)
-*   [Security](https://go.microsoft.com/fwlink/?LinkId=398603)
-*   [Client side development](https://go.microsoft.com/fwlink/?LinkID=699321)
-*   [Develop on different platforms](https://go.microsoft.com/fwlink/?LinkID=699322)
-*   [Read more on the documentation site](https://go.microsoft.com/fwlink/?LinkID=699323)
+Then restore the NuGet packages and run the application:
 
-## Run & Deploy
+```bash
+# Install the dependencies
+dotnet restore
 
-*   [Run your app](https://go.microsoft.com/fwlink/?LinkID=517851)
-*   [Run tools such as EF migrations and more](https://go.microsoft.com/fwlink/?LinkID=517853)
-*   [Publish to Microsoft Azure Web Apps](https://go.microsoft.com/fwlink/?LinkID=398609)
+# Run
+dotnet run
+```
 
-We would love to hear your [feedback](https://go.microsoft.com/fwlink/?LinkId=518015)
+You can shut down the web server manually by pressing Ctrl-C.
+
+## Important Snippets
+
+### 1. Limit API endpoint to only Admin users
+
+```csharp
+// /Controllers/PingController.cs
+
+[Authorize(Roles = "admin")]
+public IActionResult Admin()
+{
+    return View();
+}
+```
