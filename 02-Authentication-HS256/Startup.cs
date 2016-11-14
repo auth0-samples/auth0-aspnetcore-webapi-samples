@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -38,8 +39,12 @@ namespace WebAPIApplication
             loggerFactory.AddConsole(Configuration.GetSection("Logging"));
             loggerFactory.AddDebug();
 
-            var keyAsBase64 = Configuration["auth0:clientSecret"].Replace('_', '/').Replace('-', '+');
-            var keyAsBytes = Convert.FromBase64String(keyAsBase64);
+            // If your client secret is base64 encoded, then uncomment these two lines
+            //var keyAsBase64 = Configuration["auth0:clientSecret"].Replace('_', '/').Replace('-', '+');
+            //var secret = Convert.FromBase64String(keyAsBase64);
+
+            // If your client secret is base64 encoded, then comment out this line, and rather use 2 lines above
+            var secret = Encoding.UTF8.GetBytes(Configuration["auth0:clientSecret"]);
 
             var options = new JwtBearerOptions
             {
@@ -47,7 +52,7 @@ namespace WebAPIApplication
                 {
                     ValidIssuer = $"https://{Configuration["auth0:domain"]}/",
                     ValidAudience = Configuration["auth0:clientId"],
-                    IssuerSigningKey = new SymmetricSecurityKey(keyAsBytes)                
+                    IssuerSigningKey = new SymmetricSecurityKey(secret)                
                 }
             };
             app.UseJwtBearerAuthentication(options);
