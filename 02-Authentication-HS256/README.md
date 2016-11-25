@@ -17,7 +17,7 @@ Next, update the `appsettings.json` with your Auth0 settings:
   "Auth0": {
     "Domain": "Your Auth0 domain",
     "ClientId": "Your Auth0 Client Id",
-    "ClientSecret": "Tour Auth0 Client Secret"
+    "ClientSecret": "Your Auth0 Client Secret"
   } 
 }
 ```
