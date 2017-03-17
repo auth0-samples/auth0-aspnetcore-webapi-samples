@@ -1,8 +1,13 @@
 # Authenticate with JWT (RS256)
 
-This example shows how to authenticate a user using a JSON Web Token (JWT) which is signed using RS256.
+This example shows how to use [Custom Policy-Based Authorization](https://docs.microsoft.com/en-us/aspnet/core/security/authorization/policies) to
+require specific scopes in your API.
 
-You can read a quickstart for this sample [here](https://auth0.com/docs/quickstart/backend/aspnet-core-webapi/01-authentication-rs256). 
+It includes a `HasScopeRequirement` that lets you create custom policies that require
+a specific scope, and a `HasScopeHandler` that will check that the required scope is
+present in the principal claims.
+
+You can read a quickstart for this sample [here](https://auth0.com/docs/quickstart/backend/aspnet-core-webapi/02-authorization). 
 
 ## Getting Started
 
@@ -15,9 +20,9 @@ Next, update the `appsettings.json` with your Auth0 settings:
 ```json
 {
   "Auth0": {
-    "Domain": "Your Auth0 domain",
-    "ClientId": "Your Auth0 Client Id"
-  } 
+    "Domain": "{DOMAIN}",
+    "ApiIdentifier": "{API_IDENTIFIER}"
+  }
 }
 ```
 
@@ -35,33 +40,64 @@ You can shut down the web server manually by pressing Ctrl-C.
 
 ## Important Snippets
 
-### 1. Register JWT middleware
+### 1. Create custom policies with specific requirements
 
 ```csharp
-// /Startup.cs
+// /Startup.cs ConfigureServices
 
-var options = new JwtBearerOptions
+string domain = $"https://{Configuration["Auth0:Domain"]}/";
+services.AddAuthorization(options =>
 {
-    Audience = Configuration["auth0:clientId"],
-    Authority = $"https://{Configuration["auth0:domain"]}/"
-};
-app.UseJwtBearerAuthentication(options);
+    // these are simple policies, but you can also
+    // combine different requirements to create policies
+    options.AddPolicy("read:timesheets",
+        policy => policy.Requirements.Add(new HasScopeRequirement("read:timesheets", domain)));
+    options.AddPolicy("create:timesheets",
+        policy => policy.Requirements.Add(new HasScopeRequirement("create:timesheets", domain)));
+});
 ```
 
-### 2. Secure an API method
+### 2. Register the handler for the requirement
 
 ```csharp
-// /Controllers/PingController.cs
+// /Startup.cs ConfigureServices
 
-[Route("api")]
-public class PingController : Controller
+// register the scope authorization handler
+services.AddSingleton<IAuthorizationHandler, HasScopeHandler>();
+```
+
+### 3. Add policy requirements in controller actions
+
+```csharp
+[Route("api/timesheets")]
+public class TimesheetsController : Controller
 {
-    [Authorize]
+    [Authorize(Policy="read:timesheets")]
     [HttpGet]
-    [Route("ping/secure")]
-    public string PingSecured()
+    public IActionResult GetAll()
     {
-        return "All good. You only get this message if you are authenticated.";
+        return Json(new Timesheet[] 
+        {
+            new Timesheet
+            {
+                Date = DateTime.Now,
+                Employee = "Peter Parker",
+                Hours = 8.5F
+            },
+            new Timesheet
+            {
+                Date = DateTime.Now.AddDays(-1),
+                Employee = "Peter Parker",
+                Hours = 7.5F
+            }
+        });
+    }
+
+    [Authorize(Policy="create:timesheets")]
+    [HttpPost]
+    public IActionResult Create(Timesheet timeheet)
+    {
+        return Created("http://localhost:5000/api/timeheets/1", timeheet);
     }
 }
 ```
