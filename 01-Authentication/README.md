@@ -2,7 +2,7 @@
 
 This example shows how to authenticate a user using a JSON Web Token (JWT) which is signed using RS256.
 
-You can read a quickstart for this sample [here](https://auth0.com/docs/quickstart/backend/aspnet-core-webapi/01-authentication-rs256). 
+You can read a quickstart for this sample [here](https://auth0.com/docs/quickstart/backend/aspnet-core-webapi/04-authentication-rs256-legacy). 
 
 ## Getting Started
 
