@@ -33,22 +33,18 @@ namespace WebAPIApplication
             // Add framework services.
             services.AddMvc();
 
-            // Allow injection of configuration
-            services.AddSingleton<IConfiguration>(Configuration);
-        }
-
-        // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory)
-        {
-            loggerFactory.AddConsole(Configuration.GetSection("Logging"));
-            loggerFactory.AddDebug();
-            var logger = loggerFactory.CreateLogger("Auth0");
-            
-            var options = new JwtBearerOptions
+            string domain = $"https://{Configuration["Auth0:Domain"]}/";
+            services.AddAuthentication(options =>
             {
-                Audience = Configuration["auth0:apiIdentifier"],
-                Authority = $"https://{Configuration["auth0:domain"]}/",
-                Events = new JwtBearerEvents
+                options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+
+            }).AddJwtBearerAuthentication(options =>
+            {
+                options.Authority = domain;
+                options.Audience = Configuration["Auth0:ApiIdentifier"];
+
+                options.Events = new JwtBearerEvents
                 {
                     OnTokenValidated = context =>
                     {
@@ -65,11 +61,59 @@ namespace WebAPIApplication
 
                         return Task.FromResult(0);
                     }
-                }
-            };
-            app.UseJwtBearerAuthentication(options);
-            
-            app.UseMvc();
+                };
+            });
+
+            // Allow injection of configuration
+            //services.AddSingleton<IConfiguration>(Configuration);
+        }
+
+        // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
+        public void Configure(IApplicationBuilder app, IHostingEnvironment env)
+        {
+            if (env.IsDevelopment())
+            {
+                app.UseDeveloperExceptionPage();
+            }
+            else
+            {
+                app.UseExceptionHandler("/Home/Error");
+            }
+
+            app.UseStaticFiles();
+
+            app.UseAuthentication();
+
+            app.UseMvc(routes =>
+            {
+                routes.MapRoute(
+                    name: "default",
+                    template: "{controller=Home}/{action=Index}/{id?}");
+            });
+            // var options = new JwtBearerOptions
+            // {
+            //     Audience = Configuration["auth0:apiIdentifier"],
+            //     Authority = $"https://{Configuration["auth0:domain"]}/",
+            //     Events = new JwtBearerEvents
+            //     {
+            //         OnTokenValidated = context =>
+            //         {
+            //             // Grab the raw value of the token, and store it as a claim so we can retrieve it again later in the request pipeline
+            //             // Have a look at the ValuesController.UserInformation() method to see how to retrieve it and use it to retrieve the
+            //             // user's information from the /userinfo endpoint
+            //             if (context.SecurityToken is JwtSecurityToken token)
+            //             {
+            //                 if (context.Ticket.Principal.Identity is ClaimsIdentity identity)
+            //                 {
+            //                     identity.AddClaim(new Claim("access_token", token.RawData));
+            //                 }
+            //             }
+
+            //             return Task.FromResult(0);
+            //         }
+            //     }
+            // };
+            // app.UseJwtBearerAuthentication(options);
         }
     }
 }
