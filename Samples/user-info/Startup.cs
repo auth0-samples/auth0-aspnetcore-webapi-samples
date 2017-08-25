@@ -39,7 +39,7 @@ namespace WebAPIApplication
                 options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
                 options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
 
-            }).AddJwtBearerAuthentication(options =>
+            }).AddJwtBearer(options =>
             {
                 options.Authority = domain;
                 options.Audience = Configuration["Auth0:ApiIdentifier"];
@@ -53,7 +53,7 @@ namespace WebAPIApplication
                         // user's information from the /userinfo endpoint
                         if (context.SecurityToken is JwtSecurityToken token)
                         {
-                            if (context.Ticket.Principal.Identity is ClaimsIdentity identity)
+                            if (context.Principal.Identity is ClaimsIdentity identity)
                             {
                                 identity.AddClaim(new Claim("access_token", token.RawData));
                             }

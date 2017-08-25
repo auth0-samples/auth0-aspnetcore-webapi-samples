@@ -36,7 +36,7 @@ namespace WebAPIApplication
                 options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
                 options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
 
-            }).AddJwtBearerAuthentication(options =>
+            }).AddJwtBearer(options =>
             {
                 options.TokenValidationParameters = new TokenValidationParameters
                 {
@@ -44,7 +44,9 @@ namespace WebAPIApplication
                     ValidAudience = apiIdentifier,
                     IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(apiSecret))
                 };
-            }).AddAuthorization(options =>
+            });
+            
+            services.AddAuthorization(options =>
             {
                 options.AddPolicy("read:messages", policy => policy.Requirements.Add(new HasScopeRequirement("read:messages", domain)));
                 options.AddPolicy("create:messages", policy => policy.Requirements.Add(new HasScopeRequirement("create:messages", domain)));
