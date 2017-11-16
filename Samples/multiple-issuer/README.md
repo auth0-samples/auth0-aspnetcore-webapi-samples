@@ -20,6 +20,14 @@ dotnet run
 
 You can shut down the web server manually by pressing Ctrl-C.
 
+## Running the sample with Docker
+
+In order to run the example with docker you need to have `docker` installed.
+
+You also need to set the client credentials as explained [previously](#getting-started).
+
+Execute in command line `sh exec.sh` to run the Docker in Linux, or `.\exec.ps1` to run the Docker in Windows.
+
 ## Important Snippets
 
 ### 1. Register JWT middleware
