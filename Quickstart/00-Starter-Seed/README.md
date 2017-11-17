@@ -25,7 +25,7 @@ dotnet restore
 dotnet run
 ```
 
-Then go to `http://localhost:5000/api/ping` in Postman (or your web browser) to access the ping API endpoint.
+Then go to `http://localhost:3010/api/ping` in Postman (or your web browser) to access the ping API endpoint.
 
 ## Running th sample with Docker
 
