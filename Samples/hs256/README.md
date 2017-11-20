@@ -4,9 +4,9 @@ This example shows how to authenticate a user using a JSON Web Token (JWT) which
 
 You can read a quickstart for this sample [here](https://auth0.com/docs/quickstart/backend/aspnet-core-webapi/01-authentication-rs256). 
 
-## Getting Started
+## To run this project
 
-To run this quickstart you can fork and clone this repo.
+To run this sample you can fork and clone this repo.
 
 Ensure that you have configured your application in Auth0 to use RS256 for signing JSON Web Tokens.
 
@@ -16,30 +16,36 @@ Next, update the `appsettings.json` with your Auth0 settings:
 {
   "Auth0": {
     "Domain": "Your Auth0 domain",
-    "ClientId": "Your Auth0 Client Id"
+    "ClientId": "Your Auth0 Client Id",
+    "ApiSecret": "Your API secret"
   } 
 }
 ```
 
-Then restore the NuGet packages and run the application:
+### Using the command line
+
+Restore the NuGet packages and run the application:
 
 ```bash
-# Install the dependencies
 dotnet restore
 
-# Run
 dotnet run
 ```
 
-You can shut down the web server manually by pressing Ctrl-C.
+Then go to `http://localhost:5000/api/ping` in Postman (or your web browser) to access the ping API endpoint.
 
-## Running the sample with Docker
+To access the secure endpoint you will need to [obtain an access token](https://auth0.com/docs/tokens/access-token#how-to-get-an-access-token). and then pass the access token as a **Bearer** token in the **Authorization** header when calling the `http://localhost:5000/api/ping/secure` endpoint.
+
+### Using Docker
 
 In order to run the example with docker you need to have `docker` installed.
 
-You also need to set the client credentials as explained [previously](#getting-started).
-
 Execute in command line `sh exec.sh` to run the Docker in Linux, or `.\exec.ps1` to run the Docker in Windows.
+
+Then go to `http://localhost:3010/api/ping` in Postman (or your web browser) to access the ping API endpoint.
+
+To access the secure endpoint you will need to [obtain an access token](https://auth0.com/docs/tokens/access-token#how-to-get-an-access-token). and then pass the access token as a **Bearer** token in the **Authorization** header when calling the `http://localhost:3010/api/ping/secure` endpoint.
+
 
 ## Important Snippets
 
