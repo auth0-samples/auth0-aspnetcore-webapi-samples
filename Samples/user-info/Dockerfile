@@ -6,8 +6,10 @@ WORKDIR /app
 
 RUN ["dotnet", "restore"]
 
+RUN dotnet add package Auth0.AuthenticationApi --version 4.2.0
+
 RUN ["dotnet", "build"]
 
-EXPOSE 5000/tcp
+EXPOSE 3010/tcp
 
 ENTRYPOINT ["dotnet", "run", "--server.urls", "http://0.0.0.0:3010"]
