@@ -1,6 +1,39 @@
 # Extracting a user's information from a JWT using ASP.NET Core Web API
 
-This example demonstrates how you can retrieve a user's information from inside an ASP.NET Core controller. 
+## To run this project
+
+Update the `appsettings.json` with your Auth0 settings:
+
+```json
+{
+  "Auth0": {
+    "Domain": "Your Auth0 domain",
+    "ClientId": "Your Auth0 Client Id"
+  } 
+}
+```
+
+### Using the command line
+
+Restore the NuGet packages and run the application:
+
+```bash
+dotnet restore
+
+dotnet run
+```
+
+### Using Docker
+
+In order to run the example with docker you need to have **Docker** installed.
+
+Execute in command line `sh exec.sh` to run the Docker in Linux or macOS, or `.\exec.ps1` to run the Docker in Windows.
+
+## Calling the API
+
+To access any of the endpoints you will need to [obtain an access token](https://auth0.com/docs/tokens/access-token#how-to-get-an-access-token) and then pass the access token as a **Bearer** token in the **Authorization** header when calling the endpoints.
+
+## Understanding the code
 
 1. As a general rule, all the claims on the JWT which was passed in will be available in the Claims of the User object:
 
@@ -84,8 +117,3 @@ public async Task<object> UserInformation()
 ```
 
 > **NB**: Retrieving the full user profile should be done in rare circumstances. You should definitely not make a call to the `/userinfo` endpoint every time a user calls one of your API endpoints, as you will be rate limited by Auth0. It is therefore suggested that you only retrieve the actual User Id as demonstrated in (2) above, and use that as a foreign key in your own database.
-
-## To run this application:
-
-1. This example uses RS256 JSON Web Tokens. Go to the Application in your Auth0 Dashboard and go to Settings > Advanced Settings > OAuth and ensure the **JsonWebToken Signature Algorithm** is set to **RS256**.
-2. Ensure you have set the Auth0 settings in your `appsettings.json` file
