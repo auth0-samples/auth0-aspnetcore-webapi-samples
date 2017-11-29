@@ -36,37 +36,86 @@ Execute in command line `sh exec.sh` to run the Docker in Linux or macOS, or `.\
 
 ## Calling the API
 
-Go to `http://localhost:3010/api/ping` in Postman (or your web browser) to access the ping API endpoint. To access the secure endpoint you will need to [obtain an access token](https://auth0.com/docs/tokens/access-token#how-to-get-an-access-token) and then pass the access token as a **Bearer** token in the **Authorization** header when calling the `http://localhost:3010/api/ping/secure` endpoint.
+Go to `http://localhost:3010/api/public` in Postman (or your web browser) to access the ping API endpoint. To access the secure endpoint you will need to [obtain an access token](https://auth0.com/docs/tokens/access-token#how-to-get-an-access-token) and then pass the access token as a **Bearer** token in the **Authorization** header when calling the `http://localhost:3010/api/private` endpoint.
 
 ## Important Snippets
 
-### 1. Register JWT middleware
+### 1. Register Authenticatio Services
 
 ```csharp
-// /Startup.cs
+// Startup.cs
 
-var options = new JwtBearerOptions
+public void ConfigureServices(IServiceCollection services)
 {
-    Audience = Configuration["auth0:clientId"],
-    Authority = $"https://{Configuration["auth0:domain"]}/"
-};
-app.UseJwtBearerAuthentication(options);
+    // Add framework services.
+    services.AddMvc();
+
+    string domain = $"https://{Configuration["Auth0:Domain"]}/";
+    string apiIdentifier = Configuration["Auth0:ApiIdentifier"];
+    string apiSecret = Configuration["Auth0:ApiSecret"];
+    services.AddAuthentication(options =>
+    {
+        options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+        options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+
+    }).AddJwtBearer(options =>
+    {
+        options.TokenValidationParameters = new TokenValidationParameters
+        {
+            ValidIssuer = domain,
+            ValidAudience = apiIdentifier,
+            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(apiSecret))
+        };
+    });
+}
 ```
 
-### 2. Secure an API method
+### 2. Register Authentication Middleware
 
 ```csharp
-// /Controllers/PingController.cs
+// Startup.cs
+
+public void Configure(IApplicationBuilder app, IHostingEnvironment env)
+{
+    if (env.IsDevelopment())
+    {
+        app.UseDeveloperExceptionPage();
+    }
+    else
+    {
+        app.UseExceptionHandler("/Home/Error");
+    }
+
+    app.UseStaticFiles();
+
+    app.UseAuthentication();
+
+    app.UseMvc(routes =>
+    {
+        routes.MapRoute(
+            name: "default",
+            template: "{controller=Home}/{action=Index}/{id?}");
+    });
+}
+```
+
+### 3. Secure an API method
+
+```csharp
+// /Controllers/ApiController.cs
 
 [Route("api")]
-public class PingController : Controller
+public class ApiController : Controller
 {
-    [Authorize]
     [HttpGet]
-    [Route("ping/secure")]
-    public string PingSecured()
+    [Route("private")]
+    [Authorize]
+    public IActionResult Private()
     {
-        return "All good. You only get this message if you are authenticated.";
+        return Json(new
+        {
+            Message = "Hello from a private endpoint! You need to be authenticated to see this."
+        });
     }
 }
 ```
