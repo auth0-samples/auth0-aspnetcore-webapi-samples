@@ -2,7 +2,7 @@
 
 This example shows how to authenticate a user using a JSON Web Token (JWT) which is signed using RS256.
 
-You can read a quickstart for this sample [here](https://auth0.com/docs/quickstart/backend/aspnet-core-webapi/01-authorization). 
+You can read a quickstart for this sample [here](https://auth0.com/docs/quickstart/backend/aspnet-core-webapi/v1/01-authorization). 
 
 ## Getting Started
 
@@ -51,17 +51,20 @@ app.UseJwtBearerAuthentication(options);
 ### 2. Secure an API method
 
 ```csharp
-// /Controllers/PingController.cs
+// /Controllers/ApiController.cs
 
 [Route("api")]
-public class PingController : Controller
+public class ApiController : Controller
 {
-    [Authorize]
     [HttpGet]
-    [Route("ping/secure")]
-    public string PingSecured()
+    [Route("private")]
+    [Authorize]
+    public IActionResult Private()
     {
-        return "All good. You only get this message if you are authenticated.";
+        return Json(new
+        {
+            Message = "Hello from a private endpoint! You need to be authenticated to see this."
+        });
     }
 }
 ```
