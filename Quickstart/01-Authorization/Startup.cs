@@ -26,6 +26,18 @@ namespace WebAPIApplication
         {
             // Add framework services.
             services.AddMvc();
+            services.AddCors(options =>
+            {
+                options.AddPolicy("AllowSpecificOrigin",
+                    builder =>
+                    {
+                        builder
+                        .WithOrigins("http://localhost:3000") 
+                        .AllowAnyMethod()
+                        .AllowAnyHeader()
+                        .AllowCredentials();
+                    });
+            });
 
             string domain = $"https://{Configuration["Auth0:Domain"]}/";
             services.AddAuthentication(options =>
@@ -59,6 +71,8 @@ namespace WebAPIApplication
             {
                 app.UseExceptionHandler("/Home/Error");
             }
+
+            app.UseCors("AllowSpecificOrigin");
 
             app.UseStaticFiles();
 
