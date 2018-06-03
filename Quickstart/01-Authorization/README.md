@@ -39,7 +39,7 @@ Go to `http://localhost:3010/api/public` in Postman (or your web browser) to acc
 
 ## Important Snippets
 
-### 1. Register Authenticatio Services
+### 1. Register Authentication Services
 
 ```csharp
 // Startup.cs
