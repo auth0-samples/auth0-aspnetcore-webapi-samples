@@ -22,7 +22,7 @@ Execute in command line `sh exec.sh` to run the Docker in Linux or macOS, or `.\
 
 ## Calling the API
 
-Go to `http://localhost:3010/api/ping` in Postman (or your web browser) to access the ping API endpoint. To access the secure endpoint you will need to [obtain an access token](https://auth0.com/docs/tokens/access-token#how-to-get-an-access-token) and then pass the access token as a **Bearer** token in the **Authorization** header when calling the `http://localhost:3010/api/ping/secure` endpoint.
+Go to `http://localhost:3010/api/public` in Postman (or your web browser) to access the ping API endpoint. To access the secure endpoint you will need to [obtain an access token](https://auth0.com/docs/tokens/access-token#how-to-get-an-access-token) and then pass the access token as a **Bearer** token in the **Authorization** header when calling the `http://localhost:3010/api/private` endpoint.
 
 ## Important Snippets
 
@@ -46,7 +46,7 @@ public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerF
     {
         TokenValidationParameters = new TokenValidationParameters
         {
-            ValidAudience = "https://rs256.test.api",
+            ValidAudience = "https://quickstarts/api",
             ValidIssuers = new List<string>(issuers),
             IssuerSigningKeyResolver = (token, securityToken, kid, parameters) => keyResolver.GetSigningKey(securityToken.Issuer, kid)
         }

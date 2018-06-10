@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
@@ -27,7 +28,8 @@ namespace WebAPIApplication
         public void ConfigureServices(IServiceCollection services)
         {
             // Add framework services.
-            services.AddMvc();
+            services.AddMvc()
+                .SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
 
             string[] issuers = {
                 "https://jerrie.auth0.com/",
@@ -43,7 +45,7 @@ namespace WebAPIApplication
             {
                 options.TokenValidationParameters = new TokenValidationParameters
                 {
-                    ValidAudience = "https://rs256.test.api",
+                    ValidAudience = "https://quickstarts/api",
                     ValidIssuers = new List<string>(issuers),
                     IssuerSigningKeyResolver = (token, securityToken, kid, parameters) => keyResolver.GetSigningKey(securityToken.Issuer, kid)
                 };

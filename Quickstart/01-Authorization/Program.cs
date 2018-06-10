@@ -9,10 +9,10 @@ namespace WebAPIApplication
     {
         public static void Main(string[] args)
         {
-            BuildWebHost(args).Run();
+            CreateWebHostBuilder(args).Build().Run();
         }
 
-        public static IWebHost BuildWebHost(string[] args)
+        public static IWebHostBuilder CreateWebHostBuilder(string[] args)
         {
             var config = new ConfigurationBuilder()
                 .SetBasePath(Directory.GetCurrentDirectory())
@@ -23,8 +23,7 @@ namespace WebAPIApplication
             return WebHost.CreateDefaultBuilder(args)
                 .UseUrls("http://*:5000")
                 .UseConfiguration(config)
-                .UseStartup<Startup>()
-                .Build();
+                .UseStartup<Startup>();
         }
     }
 }
