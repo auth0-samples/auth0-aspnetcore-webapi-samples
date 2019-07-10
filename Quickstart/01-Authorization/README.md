@@ -46,10 +46,8 @@ Go to `http://localhost:3010/api/public` in Postman (or your web browser) to acc
 
 public void ConfigureServices(IServiceCollection services)
 {
-    // Add framework services.
-    services.AddMvc();
-
-    string domain = $"https://{Configuration["Auth0:Domain"]}/";
+    // Leave any code your app/template already has here and just add the lines:
+    
     services.AddAuthentication(options =>
     {
         options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -57,7 +55,7 @@ public void ConfigureServices(IServiceCollection services)
 
     }).AddJwtBearer(options =>
     {
-        options.Authority = domain;
+        options.Authority = $"https://{Configuration["Auth0:Domain"]}/";
         options.Audience = Configuration["Auth0:ApiIdentifier"];
     });
 }
@@ -70,25 +68,8 @@ public void ConfigureServices(IServiceCollection services)
 
 public void Configure(IApplicationBuilder app, IHostingEnvironment env)
 {
-    if (env.IsDevelopment())
-    {
-        app.UseDeveloperExceptionPage();
-    }
-    else
-    {
-        app.UseExceptionHandler("/Home/Error");
-    }
-
-    app.UseStaticFiles();
-
+    // Leave any code your app/template already has here and just add the line:
     app.UseAuthentication();
-
-    app.UseMvc(routes =>
-    {
-        routes.MapRoute(
-            name: "default",
-            template: "{controller=Home}/{action=Index}/{id?}");
-    });
 }
 ```
 
@@ -97,11 +78,11 @@ public void Configure(IApplicationBuilder app, IHostingEnvironment env)
 ```csharp
 // /Controllers/ApiController.cs
 
-[Route("api")]
-public class ApiController : Controller
+[Route("api/[controller]")]
+[ApiController]
+public class ApiController : ControllerBase
 {
     [HttpGet]
-    [Route("private")]
     [Authorize]
     public IActionResult Private()
     {
