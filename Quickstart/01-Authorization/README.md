@@ -48,6 +48,7 @@ public void ConfigureServices(IServiceCollection services)
 {
     // Leave any code your app/template already has here and just add the lines:
     
+	var domain = $"https://{Configuration["Auth0:Domain"]}/";
     services.AddAuthentication(options =>
     {
         options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -55,7 +56,7 @@ public void ConfigureServices(IServiceCollection services)
 
     }).AddJwtBearer(options =>
     {
-        options.Authority = $"https://{Configuration["Auth0:Domain"]}/";
+        options.Authority = domain;
         options.Audience = Configuration["Auth0:ApiIdentifier"];
     });
 }
@@ -80,13 +81,13 @@ public void Configure(IApplicationBuilder app, IHostingEnvironment env)
 
 [Route("api/[controller]")]
 [ApiController]
-public class ApiController : ControllerBase
+public class YourController : ControllerBase
 {
     [HttpGet]
     [Authorize]
     public IActionResult Private()
     {
-        return Json(new
+        return Ok(new
         {
             Message = "Hello from a private endpoint! You need to be authenticated to see this."
         });
