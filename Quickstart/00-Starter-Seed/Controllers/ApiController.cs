@@ -3,13 +3,14 @@ using Microsoft.AspNetCore.Mvc;
 namespace WebAPIApplication.Controllers
 {
     [Route("api")]
-    public class ApiController : Controller
+    [ApiController]
+    public class ApiController : ControllerBase
     {
         [HttpGet]
         [Route("public")]
         public IActionResult Public()
         {
-            return Json(new
+            return Ok(new
             {
                 Message = "Hello from a public endpoint! You don't need to be authenticated to see this."
             });
