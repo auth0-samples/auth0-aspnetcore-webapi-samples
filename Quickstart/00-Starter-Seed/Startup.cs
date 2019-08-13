@@ -35,6 +35,7 @@ namespace WebAPIApplication
             }
 
             app.UseHttpsRedirection();
+            app.UseAuthentication();
             app.UseMvc();
         }
     }
