@@ -9,7 +9,7 @@ namespace WebAPIApplication.Controllers
     {
         [HttpGet]
         [Route("public")]
-        public IActionResult Public()
+        public ActionResult Public()
         {
             return Json(new
             {
@@ -20,7 +20,7 @@ namespace WebAPIApplication.Controllers
         [HttpGet]
         [Route("private")]
         [Authorize]
-        public IActionResult Private()
+        public ActionResult Private()
         {
             return Json(new
             {
@@ -31,7 +31,7 @@ namespace WebAPIApplication.Controllers
         [HttpGet]
         [Route("private-scoped")]
         [Authorize("read:messages")]
-        public IActionResult Scoped()
+        public ActionResult Scoped()
         {
             return Json(new
             {
@@ -45,7 +45,7 @@ namespace WebAPIApplication.Controllers
         /// </summary>
         /// <returns></returns>
         [HttpGet("claims")]
-        public IActionResult Claims()
+        public ActionResult Claims()
         {
             return Json(User.Claims.Select(c =>
                 new

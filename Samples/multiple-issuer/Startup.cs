@@ -25,7 +25,7 @@ namespace MultipleIssuer
                     builder =>
                     {
                         builder
-                            .WithOrigins("http://localhost:3010")
+                            .WithOrigins("http://localhost:5000")
                             .AllowAnyMethod()
                             .AllowAnyHeader()
                             .AllowCredentials();

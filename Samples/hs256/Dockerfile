@@ -1,13 +1,13 @@
-FROM microsoft/dotnet:latest
+FROM mcr.microsoft.com/dotnet/core/sdk:3.1
 
-COPY . /app
+WORKDIR /source
 
-WORKDIR /app
-
+COPY *.csproj .
 RUN ["dotnet", "restore"]
 
+COPY . .
 RUN ["dotnet", "build"]
 
 EXPOSE 5000/tcp
 
-ENTRYPOINT ["dotnet", "run", "--server.urls", "http://0.0.0.0:3010"]
+ENTRYPOINT ["dotnet", "run"]
