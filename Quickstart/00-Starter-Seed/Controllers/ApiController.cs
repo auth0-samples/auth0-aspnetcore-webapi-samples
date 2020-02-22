@@ -8,7 +8,7 @@ namespace WebAPIApplication.Controllers
     {
         [HttpGet]
         [Route("public")]
-        public IActionResult Public()
+        public ActionResult Public()
         {
             return Ok(new
             {
