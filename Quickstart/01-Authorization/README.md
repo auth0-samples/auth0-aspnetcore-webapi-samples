@@ -12,7 +12,7 @@ Update the `appsettings.json` with your Auth0 settings:
 {
   "Auth0": {
     "Domain": "Your Auth0 domain",
-    "ClientId": "Your Auth0 Client Id"
+    "Audience": "Your Auth0 Client Id"
   } 
 }
 ```
@@ -48,7 +48,7 @@ public void ConfigureServices(IServiceCollection services)
 {
     // Leave any code your app/template already has here and just add the lines:
     
-	var domain = $"https://{Configuration["Auth0:Domain"]}/";
+    var domain = $"https://{Configuration["Auth0:Domain"]}/";
     services.AddAuthentication(options =>
     {
         options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -57,7 +57,7 @@ public void ConfigureServices(IServiceCollection services)
     }).AddJwtBearer(options =>
     {
         options.Authority = domain;
-        options.Audience = Configuration["Auth0:ApiIdentifier"];
+        options.Audience = Configuration["Auth0:Audience"];
     });
 }
 ```
@@ -67,10 +67,11 @@ public void ConfigureServices(IServiceCollection services)
 ```csharp
 // Startup.cs
 
-public void Configure(IApplicationBuilder app, IHostingEnvironment env)
+public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
 {
     // Leave any code your app/template already has here and just add the line:
     app.UseAuthentication();
+    app.UseAuthorization();
 }
 ```
 
@@ -85,7 +86,7 @@ public class YourController : ControllerBase
 {
     [HttpGet]
     [Authorize]
-    public IActionResult Private()
+    public ActionResult Private()
     {
         return Ok(new
         {
