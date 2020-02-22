@@ -1,15 +1,13 @@
-FROM microsoft/dotnet:latest
+FROM mcr.microsoft.com/dotnet/core/sdk:3.1
 
-COPY . /app
+WORKDIR /source
 
-WORKDIR /app
-
+COPY *.csproj .
 RUN ["dotnet", "restore"]
 
-RUN dotnet add package Auth0.AuthenticationApi --version 4.2.0
-
+COPY . .
 RUN ["dotnet", "build"]
 
 EXPOSE 3010/tcp
 
-ENTRYPOINT ["dotnet", "run", "--server.urls", "http://0.0.0.0:3010"]
+ENTRYPOINT ["dotnet", "run"]
