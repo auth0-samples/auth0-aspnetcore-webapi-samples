@@ -2,14 +2,14 @@ using System.Linq;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
-namespace WebAPIApplication.Controllers
+namespace MultipleIssuer.Controllers
 {
     [Route("api")]
     public class ApiController : Controller
     {
         [HttpGet]
         [Route("public")]
-        public IActionResult Public()
+        public ActionResult Public()
         {
             return Json(new
             {
@@ -20,7 +20,7 @@ namespace WebAPIApplication.Controllers
         [HttpGet]
         [Route("private")]
         [Authorize]
-        public IActionResult Private()
+        public ActionResult Private()
         {
             return Json(new
             {
@@ -33,7 +33,7 @@ namespace WebAPIApplication.Controllers
         /// </summary>
         /// <returns></returns>
         [HttpGet("claims")]
-        public IActionResult Claims()
+        public ActionResult Claims()
         {
             return Json(User.Claims.Select(c =>
                 new
