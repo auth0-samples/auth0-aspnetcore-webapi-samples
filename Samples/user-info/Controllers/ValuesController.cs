@@ -1,12 +1,11 @@
-using System.Security.Claims;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
 using Auth0.AuthenticationApi;
-using Microsoft.Extensions.Configuration;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 
-namespace WebAPIApplication.Controllers
+namespace UserInfo.Controllers
 {
     /*
      * This sample demonstrates how to access the user's information from inside a Web API controller.

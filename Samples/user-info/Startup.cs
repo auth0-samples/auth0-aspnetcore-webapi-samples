@@ -1,16 +1,16 @@
 using System;
+using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Threading.Tasks;
+using Auth0.AuthenticationApi;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using System.IdentityModel.Tokens.Jwt;
-using Auth0.AuthenticationApi;
 using Microsoft.Extensions.Hosting;
 
-namespace WebAPIApplication
+namespace UserInfo
 {
     public class Startup
     {

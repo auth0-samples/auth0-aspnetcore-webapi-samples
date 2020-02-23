@@ -1,9 +1,9 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 15
-VisualStudioVersion = 15.0.26403.7
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.29814.53
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WebAPIApplication", "WebAPIApplication.csproj", "{5C24DCEA-191E-4ED2-9077-0BF217385B57}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UserInfo", "UserInfo.csproj", "{5C24DCEA-191E-4ED2-9077-0BF217385B57}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -18,5 +18,8 @@ Global
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {5384BDE6-3AC3-42A2-959A-5B51FE1DFD95}
 	EndGlobalSection
 EndGlobal

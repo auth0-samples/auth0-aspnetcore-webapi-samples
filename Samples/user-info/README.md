@@ -72,36 +72,32 @@ Install-Package Auth0.AuthenticationApi
 Then, you need to ensure that you save the actual value of the JWT in a claim. You can do this in the `OnTokenValidated` event when registering the JWT middleware:
 
 ```csharp
-string domain = $"https://{Configuration["Auth0:Domain"]}/";
-services.AddAuthentication(options =>
-{
-	options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-	options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-
-}).AddJwtBearer(options =>
-{
-	options.Authority = domain;
-	options.Audience = Configuration["Auth0:Audience"];
-
-	options.Events = new JwtBearerEvents
-	{
-		OnTokenValidated = context =>
+	string domain = $"https://{Configuration["Auth0:Domain"]}/";
+	services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+		.AddJwtBearer(options =>
 		{
-			// Grab the raw value of the token, and store it as a claim so we can retrieve it again later in the request pipeline
-			// Have a look at the ValuesController.UserInformation() method to see how to retrieve it and use it to retrieve the
-			// user's information from the /userinfo endpoint
-			if (context.SecurityToken is JwtSecurityToken token)
-			{
-				if (context.Principal.Identity is ClaimsIdentity identity)
-				{
-					identity.AddClaim(new Claim("access_token", token.RawData));
-				}
-			}
+			options.Authority = domain;
+			options.Audience = Configuration["Auth0:Audience"];
 
-			return Task.CompletedTask;
-		}
-	};
-});
+			options.Events = new JwtBearerEvents
+			{
+				OnTokenValidated = context =>
+				{
+					// Grab the raw value of the token, and store it as a claim so we can retrieve it again later in the request pipeline
+					// Have a look at the ValuesController.UserInformation() method to see how to retrieve it and use it to retrieve the
+					// user's information from the /userinfo endpoint
+					if (context.SecurityToken is JwtSecurityToken token)
+					{
+						if (context.Principal.Identity is ClaimsIdentity identity)
+						{
+							identity.AddClaim(new Claim("access_token", token.RawData));
+						}
+					}
+
+					return Task.CompletedTask;
+				}
+			};
+		});
 ```
 
 Finally, inside your controller you can retreive the value of the access token from the claim, and then use that to call the `GetUserInfoAsync` method of the `AuthenticationApiClient`:
