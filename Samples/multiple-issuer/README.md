@@ -31,28 +31,30 @@ Go to `http://localhost:3010/api/public` in Postman (or your web browser) to acc
 ```csharp
 // /Startup.cs
 
-public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory)
+public void ConfigureServices(IServiceCollection services)
 {
-    loggerFactory.AddConsole(Configuration.GetSection("Logging"));
-    loggerFactory.AddDebug();
+	services.AddAuthentication()
+		.AddJwtBearer("Auth0DomainOne", options =>
+		{
+			options.Authority = Configuration["Auth0:DomainOne"];
+			options.Audience = Configuration["Auth0:Audience"];
 
-    string[] issuers = {
-        "https://jerrie.auth0.com/",
-        "https://auth0pnp.auth0.com/"
-    };
+		})
+		.AddJwtBearer("Auth0DomainTwo", options =>
+		{
+			options.Authority = Configuration["Auth0:DomainTwo"];
+			options.Audience = Configuration["Auth0:Audience"];
+		});
 
-    var keyResolver = new MultipleIssuerSigningKeyResolver();
-    var options = new JwtBearerOptions
-    {
-        TokenValidationParameters = new TokenValidationParameters
-        {
-            ValidAudience = "https://quickstarts/api",
-            ValidIssuers = new List<string>(issuers),
-            IssuerSigningKeyResolver = (token, securityToken, kid, parameters) => keyResolver.GetSigningKey(securityToken.Issuer, kid)
-        }
-    };
-    app.UseJwtBearerAuthentication(options);
+	services
+		.AddAuthorization(options =>
+		{
+			options.DefaultPolicy = new AuthorizationPolicyBuilder()
+				.RequireAuthenticatedUser()
+				.AddAuthenticationSchemes("Auth0DomainOne", "Auth0DomainTwo")
+				.Build();
+		});
 
-    app.UseMvc();
+	services.AddControllers();
 }
 ```

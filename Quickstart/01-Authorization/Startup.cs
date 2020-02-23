@@ -39,7 +39,6 @@ namespace WebAPIApplication
                 {
                     options.Authority = domain;
                     options.Audience = Configuration["Auth0:Audience"];
-
                 });
 
             services.AddAuthorization(options =>
