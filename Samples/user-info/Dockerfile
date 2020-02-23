@@ -8,6 +8,6 @@ RUN ["dotnet", "restore"]
 COPY . .
 RUN ["dotnet", "build"]
 
-EXPOSE 3010/tcp
+EXPOSE 5000/tcp
 
 ENTRYPOINT ["dotnet", "run"]
