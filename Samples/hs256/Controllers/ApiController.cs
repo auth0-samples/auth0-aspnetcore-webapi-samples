@@ -2,7 +2,7 @@ using System.Linq;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
-namespace WebAPIApplication.Controllers
+namespace HS256.Controllers
 {
     [Route("api")]
     public class ApiController : Controller
