@@ -11,7 +11,7 @@ namespace MultipleIssuer.Controllers
         [Route("public")]
         public ActionResult Public()
         {
-            return Ok(new
+            return Json(new
             {
                 Message = "Hello from a public endpoint! You don't need to be authenticated to see this."
             });
@@ -22,7 +22,7 @@ namespace MultipleIssuer.Controllers
         [Authorize]
         public ActionResult Private()
         {
-            return Ok(new
+            return Json(new
             {
                 Message = "Hello from a private endpoint! You need to be authenticated to see this."
             });
