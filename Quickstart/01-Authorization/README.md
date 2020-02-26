@@ -95,7 +95,7 @@ public class YourController : ControllerBase
 {
     [HttpGet]
     [Authorize]
-    public ActionResult Private()
+    public IActionResult Private()
     {
         return Ok(new
         {
