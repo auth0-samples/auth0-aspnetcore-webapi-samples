@@ -26,7 +26,7 @@ namespace WebAPIApplication
                     builder =>
                     {
                         builder
-                        .WithOrigins("http://localhost:5000")
+                        .WithOrigins("http://localhost:8080")
                         .AllowAnyMethod()
                         .AllowAnyHeader()
                         .AllowCredentials();

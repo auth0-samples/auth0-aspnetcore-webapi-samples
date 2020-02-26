@@ -24,18 +24,7 @@ namespace UserInfo
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddCors(options =>
-            {
-                options.AddPolicy("AllowSpecificOrigin",
-                    builder =>
-                    {
-                        builder
-                            .WithOrigins("http://localhost:5000")
-                            .AllowAnyMethod()
-                            .AllowAnyHeader()
-                            .AllowCredentials();
-                    });
-            });
+            // If accessing this API from a browser you'll need to add a CORS policy, see https://docs.microsoft.com/en-us/aspnet/core/security/cors
 
             string domain = $"https://{Configuration["Auth0:Domain"]}/";
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
@@ -85,8 +74,6 @@ namespace UserInfo
             app.UseHttpsRedirection();
 
             app.UseRouting();
-
-            app.UseCors("AllowSpecificOrigin");
 
             app.UseAuthentication();
             app.UseAuthorization();
