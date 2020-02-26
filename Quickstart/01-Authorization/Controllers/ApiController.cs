@@ -9,7 +9,7 @@ namespace WebAPIApplication.Controllers
     public class ApiController : ControllerBase
     {
         [HttpGet("public")]
-        public ActionResult Public()
+        public IActionResult Public()
         {
             return Ok(new
             {
@@ -19,7 +19,7 @@ namespace WebAPIApplication.Controllers
 
         [HttpGet("private")]
         [Authorize]
-        public ActionResult Private()
+        public IActionResult Private()
         {
             return Ok(new
             {
@@ -29,7 +29,7 @@ namespace WebAPIApplication.Controllers
 
         [HttpGet("private-scoped")]
         [Authorize("read:messages")]
-        public ActionResult Scoped()
+        public IActionResult Scoped()
         {
             return Ok(new
             {
@@ -39,7 +39,7 @@ namespace WebAPIApplication.Controllers
 
         // This is a helper action. It allows you to easily view all the claims of the token.
         [HttpGet("claims")]
-        public ActionResult Claims()
+        public IActionResult Claims()
         {
             return Ok(User.Claims.Select(c =>
                 new
