@@ -9,7 +9,7 @@ namespace MultipleIssuer.Controllers
     {
         [HttpGet]
         [Route("public")]
-        public ActionResult Public()
+        public IActionResult Public()
         {
             return Json(new
             {
@@ -20,7 +20,7 @@ namespace MultipleIssuer.Controllers
         [HttpGet]
         [Route("private")]
         [Authorize]
-        public ActionResult Private()
+        public IActionResult Private()
         {
             return Json(new
             {
@@ -33,7 +33,7 @@ namespace MultipleIssuer.Controllers
         /// </summary>
         /// <returns></returns>
         [HttpGet("claims")]
-        public ActionResult Claims()
+        public IActionResult Claims()
         {
             return Json(User.Claims.Select(c =>
                 new
