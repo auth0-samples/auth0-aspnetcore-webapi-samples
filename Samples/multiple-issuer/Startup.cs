@@ -36,13 +36,13 @@ namespace MultipleIssuer
             services.AddAuthentication()
                 .AddJwtBearer("Auth0DomainOne", options =>
                 {
-                    options.Authority = Configuration["Auth0:DomainOne"];
+                    options.Authority = $"https://{Configuration["Auth0:DomainOne"]}";
                     options.Audience = Configuration["Auth0:Audience"];
 
                 })
                 .AddJwtBearer("Auth0DomainTwo", options =>
                 {
-                    options.Authority = Configuration["Auth0:DomainTwo"];
+                    options.Authority = $"https://{Configuration["Auth0:DomainTwo"]}";
                     options.Audience = Configuration["Auth0:Audience"];
                 });
 
