@@ -12,7 +12,7 @@ Update the `appsettings.json` with your Auth0 settings:
 {
   "Auth0": {
     "Domain": "Your Auth0 domain",
-    "ClientId": "Your Auth0 Client Id",
+    "Audience": "Your Auth0 Client Id",
     "ApiSecret": "Your API secret"
   } 
 }
@@ -47,26 +47,26 @@ Go to `http://localhost:3010/api/public` in Postman (or your web browser) to acc
 
 public void ConfigureServices(IServiceCollection services)
 {
-    // Add framework services.
-    services.AddMvc();
-
     string domain = $"https://{Configuration["Auth0:Domain"]}/";
-    string apiIdentifier = Configuration["Auth0:ApiIdentifier"];
-    string apiSecret = Configuration["Auth0:ApiSecret"];
-    services.AddAuthentication(options =>
-    {
-        options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-        options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+	string audience = Configuration["Auth0:Audience"];
+	string apiSecret = Configuration["Auth0:ApiSecret"];
+	services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+		.AddJwtBearer(options =>
+		{ 
+			options.TokenValidationParameters = new TokenValidationParameters
+			{
+				ValidIssuer = domain,
+				ValidAudience = audience,
+				IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(apiSecret))
+			};
+		});
+	
+	services.AddAuthorization(options =>
+	{
+		options.AddPolicy("read:messages", policy => policy.Requirements.Add(new HasScopeRequirement("read:messages", domain)));
+	});
 
-    }).AddJwtBearer(options =>
-    {
-        options.TokenValidationParameters = new TokenValidationParameters
-        {
-            ValidIssuer = domain,
-            ValidAudience = apiIdentifier,
-            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(apiSecret))
-        };
-    });
+	services.AddControllers();
 }
 ```
 
@@ -75,27 +75,28 @@ public void ConfigureServices(IServiceCollection services)
 ```csharp
 // Startup.cs
 
-public void Configure(IApplicationBuilder app, IHostingEnvironment env)
+public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
 {
-    if (env.IsDevelopment())
-    {
-        app.UseDeveloperExceptionPage();
-    }
-    else
-    {
-        app.UseExceptionHandler("/Home/Error");
-    }
+	if (env.IsDevelopment())
+	{
+		app.UseDeveloperExceptionPage();
+	}
+	else
+	{
+		app.UseHsts();
+	}
 
-    app.UseStaticFiles();
+	app.UseHttpsRedirection();
 
-    app.UseAuthentication();
+	app.UseRouting();
 
-    app.UseMvc(routes =>
-    {
-        routes.MapRoute(
-            name: "default",
-            template: "{controller=Home}/{action=Index}/{id?}");
-    });
+	app.UseAuthentication();
+	app.UseAuthorization();
+
+	app.UseEndpoints(endpoints =>
+	{
+		endpoints.MapControllers();
+	});
 }
 ```
 

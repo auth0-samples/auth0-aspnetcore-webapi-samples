@@ -1,13 +1,21 @@
-FROM microsoft/dotnet:latest
+#See https://aka.ms/containerfastmode to understand how Visual Studio uses this Dockerfile to build your images for faster debugging.
 
-COPY . /app
-
+FROM mcr.microsoft.com/dotnet/core/aspnet:3.1-buster-slim AS base
 WORKDIR /app
+EXPOSE 80
 
-RUN ["dotnet", "restore"]
+FROM mcr.microsoft.com/dotnet/core/sdk:3.1-buster AS build
+WORKDIR /src
+COPY ["HS256.csproj", ""]
+RUN dotnet restore "./HS256.csproj"
+COPY . .
+WORKDIR "/src/."
+RUN dotnet build "HS256.csproj" -c Release -o /app/build
 
-RUN ["dotnet", "build"]
+FROM build AS publish
+RUN dotnet publish "HS256.csproj" -c Release -o /app/publish
 
-EXPOSE 5000/tcp
-
-ENTRYPOINT ["dotnet", "run", "--server.urls", "http://0.0.0.0:3010"]
+FROM base AS final
+WORKDIR /app
+COPY --from=publish /app/publish .
+ENTRYPOINT ["dotnet", "HS256.dll"]

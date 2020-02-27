@@ -1,13 +1,11 @@
-using System.Security.Claims;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
 using System.Linq;
-using System.Collections.Generic;
+using System.Security.Claims;
 using System.Threading.Tasks;
 using Auth0.AuthenticationApi;
-using Microsoft.Extensions.Configuration;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 
-namespace WebAPIApplication.Controllers
+namespace UserInfo.Controllers
 {
     /*
      * This sample demonstrates how to access the user's information from inside a Web API controller.
@@ -21,11 +19,11 @@ namespace WebAPIApplication.Controllers
     [Route("api")]
     public class ValuesController : Controller
     {
-        private readonly IConfiguration _configuration;
+        private readonly AuthenticationApiClient _client;
 
-        public ValuesController(IConfiguration configuration)
+        public ValuesController(AuthenticationApiClient client)
         {
-            _configuration = configuration;
+            _client = client;
         }
 
         [Authorize]
@@ -53,10 +51,7 @@ namespace WebAPIApplication.Controllers
             // If we have an access_token, then retrieve the user's information
             if (!string.IsNullOrEmpty(accessToken))
             {
-                var apiClient = new AuthenticationApiClient(_configuration["auth0:domain"]);
-                var userInfo = await apiClient.GetUserInfoAsync(accessToken);
-
-                return userInfo;
+                return await _client.GetUserInfoAsync(accessToken);
             }
 
             return null;

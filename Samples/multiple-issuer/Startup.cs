@@ -1,19 +1,11 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
-using Microsoft.IdentityModel.Protocols;
-using Microsoft.IdentityModel.Protocols.OpenIdConnect;
-using Microsoft.IdentityModel.Tokens;
+using Microsoft.Extensions.Hosting;
 
-namespace WebAPIApplication
+namespace MultipleIssuer
 {
     public class Startup
     {
@@ -27,33 +19,35 @@ namespace WebAPIApplication
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            // Add framework services.
-            services.AddMvc()
-                .SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
+            // If accessing this API from a browser you'll need to add a CORS policy, see https://docs.microsoft.com/en-us/aspnet/core/security/cors
 
-            string[] issuers = {
-                "https://jerrie.auth0.com/",
-                "https://auth0pnp.auth0.com/"
-            };
-            var keyResolver = new MultipleIssuerSigningKeyResolver();
-            services.AddAuthentication(options =>
-            {
-                options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-                options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-
-            }).AddJwtBearer(options =>
-            {
-                options.TokenValidationParameters = new TokenValidationParameters
+            services.AddAuthentication()
+                .AddJwtBearer("Auth0DomainOne", options =>
                 {
-                    ValidAudience = "https://quickstarts/api",
-                    ValidIssuers = new List<string>(issuers),
-                    IssuerSigningKeyResolver = (token, securityToken, kid, parameters) => keyResolver.GetSigningKey(securityToken.Issuer, kid)
-                };
-            });
+                    options.Authority = $"https://{Configuration["Auth0:DomainOne"]}";
+                    options.Audience = Configuration["Auth0:Audience"];
+
+                })
+                .AddJwtBearer("Auth0DomainTwo", options =>
+                {
+                    options.Authority = $"https://{Configuration["Auth0:DomainTwo"]}";
+                    options.Audience = Configuration["Auth0:Audience"];
+                });
+
+            services
+                .AddAuthorization(options =>
+                {
+                    options.DefaultPolicy = new AuthorizationPolicyBuilder()
+                        .RequireAuthenticatedUser()
+                        .AddAuthenticationSchemes("Auth0DomainOne", "Auth0DomainTwo")
+                        .Build();
+                });
+
+            services.AddControllers();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
             if (env.IsDevelopment())
             {
@@ -61,18 +55,19 @@ namespace WebAPIApplication
             }
             else
             {
-                app.UseExceptionHandler("/Home/Error");
+                app.UseHsts();
             }
 
-            app.UseStaticFiles();
+            app.UseHttpsRedirection();
+
+            app.UseRouting();
 
             app.UseAuthentication();
+            app.UseAuthorization();
 
-            app.UseMvc(routes =>
+            app.UseEndpoints(endpoints =>
             {
-                routes.MapRoute(
-                    name: "default",
-                    template: "{controller=Home}/{action=Index}/{id?}");
+                endpoints.MapControllers();
             });
         }
     }

@@ -1,15 +1,22 @@
-FROM microsoft/dotnet:latest
+#See https://aka.ms/containerfastmode to understand how Visual Studio uses this Dockerfile to build your images for faster debugging.
 
-COPY . /app
-
+FROM mcr.microsoft.com/dotnet/core/aspnet:3.1-buster-slim AS base
 WORKDIR /app
+EXPOSE 80
+EXPOSE 443
 
-RUN ["dotnet", "restore"]
+FROM mcr.microsoft.com/dotnet/core/sdk:3.1-buster AS build
+WORKDIR /src
+COPY ["UserInfo.csproj", ""]
+RUN dotnet restore "./UserInfo.csproj"
+COPY . .
+WORKDIR "/src/."
+RUN dotnet build "UserInfo.csproj" -c Release -o /app/build
 
-RUN dotnet add package Auth0.AuthenticationApi --version 4.2.0
+FROM build AS publish
+RUN dotnet publish "UserInfo.csproj" -c Release -o /app/publish
 
-RUN ["dotnet", "build"]
-
-EXPOSE 3010/tcp
-
-ENTRYPOINT ["dotnet", "run", "--server.urls", "http://0.0.0.0:3010"]
+FROM base AS final
+WORKDIR /app
+COPY --from=publish /app/publish .
+ENTRYPOINT ["dotnet", "UserInfo.dll"]

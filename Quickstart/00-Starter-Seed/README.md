@@ -2,7 +2,7 @@
 
 This seed project can be used if you want to follow along with the steps in the [ASP.NET Core Web API Quickstart](https://auth0.com/docs/quickstart/backend/aspnet-core-webapi).
 
-This starter seed is a basic web API application which was created using the Yeoman generator for ASP.NET, and also includes  the dependencies required to use the JWT middleware.
+This starter seed is a basic web API application which includes the dependencies required to use the JWT middleware.
 
 ## To run this project
 
@@ -12,7 +12,7 @@ Update the `appsettings.json` with your Auth0 settings:
 {
   "Auth0": {
     "Domain": "Your Auth0 domain",
-    "ClientId": "Your Auth0 Client Id"
+    "Audience": "Your Auth0 Client Id"
   } 
 }
 ```

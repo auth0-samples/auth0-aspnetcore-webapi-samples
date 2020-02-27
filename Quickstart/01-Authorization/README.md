@@ -12,7 +12,7 @@ Update the `appsettings.json` with your Auth0 settings:
 {
   "Auth0": {
     "Domain": "Your Auth0 domain",
-    "ClientId": "Your Auth0 Client Id"
+    "Audience": "Your Auth0 Client Id"
   } 
 }
 ```
@@ -39,38 +39,48 @@ Go to `http://localhost:3010/api/public` in Postman (or your web browser) to acc
 
 ## Important Snippets
 
-### 1. Register Authentication Services
+### 1. Register Authentication Services & CORS policy
 
 ```csharp
 // Startup.cs
 
 public void ConfigureServices(IServiceCollection services)
 {
-    // Leave any code your app/template already has here and just add the lines:
-    
-	var domain = $"https://{Configuration["Auth0:Domain"]}/";
-    services.AddAuthentication(options =>
-    {
-        options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-        options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-
-    }).AddJwtBearer(options =>
-    {
-        options.Authority = domain;
-        options.Audience = Configuration["Auth0:ApiIdentifier"];
-    });
+    // Leave any code your app/template already has here and just add these lines:
+    services.AddCors(options =>
+	{
+		options.AddPolicy("AllowSpecificOrigin",
+			builder =>
+			{
+				builder
+				.WithOrigins("http://localhost:5000")
+				.AllowAnyMethod()
+				.AllowAnyHeader()
+				.AllowCredentials();
+			});
+	});
+	
+    var domain = $"https://{Configuration["Auth0:Domain"]}/";
+    services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+		.AddJwtBearer(options =>
+		{
+			options.Authority = domain;
+			options.Audience = Configuration["Auth0:Audience"];
+		});
 }
 ```
 
-### 2. Register Authentication Middleware
+### 2. Register Authentication Middleware & Enable CORS
 
 ```csharp
 // Startup.cs
 
-public void Configure(IApplicationBuilder app, IHostingEnvironment env)
+public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
 {
     // Leave any code your app/template already has here and just add the line:
-    app.UseAuthentication();
+    app.UseCors("AllowSpecificOrigin");
+	app.UseAuthentication();
+	app.UseAuthorization();
 }
 ```
 
