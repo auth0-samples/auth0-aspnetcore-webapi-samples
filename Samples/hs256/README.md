@@ -1,4 +1,4 @@
-# Authenticate with JWT (RS256)
+# Authenticate with JWT (HS256)
 
 This example shows how to authenticate a user using a JSON Web Token (JWT) which is signed using HS256.
 
