@@ -4,7 +4,7 @@ This example shows how to authenticate a user using a JSON Web Token (JWT) which
 
 You can read a quickstart for this sample [here](https://auth0.com/docs/quickstart/backend/aspnet-core-webapi/01-authorization). 
 
-## To run this project
+## Run the Project
 
 Update the `appsettings.json` with your Auth0 settings:
 
@@ -17,8 +17,6 @@ Update the `appsettings.json` with your Auth0 settings:
 }
 ```
 
-### Using the command line
-
 Restore the NuGet packages and run the application:
 
 ```bash
@@ -27,15 +25,31 @@ dotnet restore
 dotnet run
 ```
 
-### Using Docker
+Once the app is up and running, verify that the public API endpoint can be reached, either by using `curl` or accessing `http://localhost:3010/api/public` in the browser. You should see the following output:
 
-In order to run the example with docker you need to have **Docker** installed.
+```json
+{
+  "message": "Hello from a public endpoint! You don't need to be authenticated to see this."
+}
+```
 
-Execute in command line `sh exec.sh` to run the Docker in Linux or macOS, or `.\exec.ps1` to run the Docker in Windows.
+## Run this project with Docker
+
+In order to run the example with Docker you need to have [Docker](https://docker.com/products/docker-desktop) installed.
+
+To build the Docker image and run the project inside a container, run the following command in a terminal, depending on your operating system:
+
+```
+# Mac
+sh exec.sh
+
+# Windows (using Powershell)
+.\exec.ps1
+```
 
 ## Calling the API
 
-Go to `http://localhost:3010/api/public` in Postman (or your web browser) to access the ping API endpoint. To access the secure endpoint you will need to [obtain an access token](https://auth0.com/docs/tokens/access-token#how-to-get-an-access-token) and then pass the access token as a **Bearer** token in the **Authorization** header when calling the `http://localhost:3010/api/private` endpoint.
+To access the secure endpoint you will need to [obtain an access token](https://auth0.com/docs/tokens/access-token#how-to-get-an-access-token) and then pass the access token as a **Bearer** token in the **Authorization** header when calling the `http://localhost:3010/api/private` endpoint.
 
 ## Important Snippets
 
