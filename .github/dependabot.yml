@@ -2,7 +2,7 @@ version: 2
 updates:
 
   - package-ecosystem: "nuget" 
-    directory: "/01-Starter-Seed" 
+    directory: "/00-Starter-Seed" 
     schedule:
       interval: "daily"
     ignore:
@@ -10,7 +10,7 @@ updates:
         update-types: ["version-update:semver-major"]
       
   - package-ecosystem: "nuget" 
-    directory: "/02-Authorization" 
+    directory: "/01-Authorization" 
     schedule:
       interval: "daily"
     ignore:
