@@ -7,7 +7,7 @@ updates:
       interval: "daily"
     ignore:
       - dependency-name: "*"
-        update-types: ["version-update:semver-major"]
+        update-types: ["version-update:semver-major", "version-update:semver-patch"]
       
   - package-ecosystem: "nuget" 
     directory: "/01-Authorization" 
@@ -15,4 +15,4 @@ updates:
       interval: "daily"
     ignore:
       - dependency-name: "*"
-        update-types: ["version-update:semver-major"]
+        update-types: ["version-update:semver-major", "version-update:semver-patch"]
