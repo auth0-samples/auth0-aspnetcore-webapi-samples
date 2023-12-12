@@ -1,0 +1,105 @@
+/**
+ * Represents an Intersection Observer utility class that provides a convenient way
+ * to track the visibility of an element within the viewport.
+ *
+ * @example
+ * const observer = new IntersectionObserver((entries) => {
+ *   entries.forEach((entry) => {
+ *     if (entry.isIntersecting) {
+ *       console.log('Element is visible');
+ *     } else {
+ *       console.log('Element is not visible');
+ *     }
+ *   });
+ * });
+ *
+ * observer.observe(document.querySelector('.target-element'));
+ */
+class IntersectionObserver {
+  /**
+   * Constructs an instance of the IntersectionObserver class.
+   *
+   * @param {Function} callback - The function to be called whenever the visibility of the target element changes.
+   *                             The callback function receives an array of IntersectionObserverEntry objects as its parameter.
+   * @param {Object} options - An optional object that configures the Intersection Observer.
+   * @param {number} options.rootMargin - A margin around the root element's bounding box. Can have values similar to CSS margin property.
+   * @param {number} options.threshold - Either a single number or an array of numbers between 0 and 1, indicating the percentage of the target element's visibility needed for the callback to be invoked.
+   * @throws {Error} If the callback parameter is not a function, an error is thrown indicating that a valid callback function is required.
+   */
+  constructor(callback, options = {}) {
+    if (typeof callback !== 'function') {
+      throw new Error('A valid callback function is required.');
+    }
+
+    /** @private */
+    this.callback = callback;
+
+    /** @private */
+    this.options = options;
+
+    /** @private */
+    this.observer = new window.IntersectionObserver(this.handleIntersection, this.options);
+  }
+
+  /**
+   * Handles the intersection changes of the target element.
+   *
+   * @private
+   * @param {Array} entries - An array of IntersectionObserverEntry objects representing the changes in the intersection between the target element and the root element.
+   */
+  handleIntersection(entries) {
+    this.callback(entries);
+  }
+
+  /**
+   * Starts observing the target element.
+   *
+   * @param {Element} target - The element to be observed.
+   * @throws {Error} If the target parameter is not a valid DOM element, an error is thrown indicating that a valid DOM element is required.
+   */
+  observe(target) {
+    if (!(target instanceof Element)) {
+      throw new Error('A valid DOM element is required.');
+    }
+
+    this.observer.observe(target);
+  }
+
+  /**
+   * Stops observing the target element.
+   *
+   * @param {Element} target - The element to stop observing.
+   * @throws {Error} If the target parameter is not a valid DOM element, an error is thrown indicating that a valid DOM element is required.
+   */
+  unobserve(target) {
+    if (!(target instanceof Element)) {
+      throw new Error('A valid DOM element is required.');
+    }
+
+    this.observer.unobserve(target);
+  }
+
+  /**
+   * Stops observing all target elements.
+   */
+  disconnect() {
+    this.observer.disconnect();
+  }
+}
+
+// Usage Example for IntersectionObserver
+
+// Example: Tracking the visibility of an element
+// Create an IntersectionObserver instance with a callback function that logs the visibility status of the target element.
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach((entry) => {
+    if (entry.isIntersecting) {
+      console.log('Element is visible');
+    } else {
+      console.log('Element is not visible');
+    }
+  });
+});
+
+// Start observing the target element
+observer.observe(document.querySelector('.target-element'));
