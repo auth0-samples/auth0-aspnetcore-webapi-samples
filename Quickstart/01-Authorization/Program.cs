@@ -1,12 +1,11 @@
+using Auth0.AspNetCore.Authentication.Api;
 using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Hosting;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using System.Net;
+
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.IdentityModel.Logging;
+
 using WebAPIApplication;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -25,12 +24,15 @@ builder.Services.AddCors(options =>
 });
 
 var domain = $"https://{builder.Configuration["Auth0:Domain"]}/";
-builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-.AddJwtBearer(options =>
-{
-    options.Authority = domain;
-    options.Audience = builder.Configuration["Auth0:Audience"];
-});
+builder.Services.AddAuth0ApiAuthentication(options =>
+    {
+        options.Domain = builder.Configuration["Auth0:Domain"];
+        options.JwtBearerOptions = new JwtBearerOptions()
+        {
+            Audience = builder.Configuration["Auth0:Audience"]
+        };
+    }
+);
 
 builder.Services.AddAuthorization(options =>
 {
